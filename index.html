@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoVoz | Blog de Contaminación Ambiental</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  
+  :root {
+    --verde-oscuro: #1b4332;
+    --verde: #2d6a4f;
+    --verde-claro: #52b788;
+    --crema: #f1faee;
+    --alerta: #e63946;
+    --amarillo: #ffb703;
+    --texto: #1d3557;
+  }
+
+  body {
+    background: var(--crema);
+    color: var(--texto);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, var(--verde-oscuro), var(--verde));
+    color: white;
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: auto;
+  }
+  .logo { font-size: 1.8rem; font-weight: bold; }
+  .logo span { color: var(--verde-claro); }
+  nav ul { display: flex; list-style: none; gap: 1.5rem; }
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+  nav a:hover { color: var(--amarillo); }
+
+  /* HERO */
+  .hero {
+    height: 85vh;
+    background: linear-gradient(rgba(27,67,50,0.7), rgba(27,67,50,0.8)),
+                url('https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=1600') center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 2rem;
+  }
+  .hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    animation: fadeInDown 1s;
+  }
+  .hero-content p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    animation: fadeInUp 1s;
+  }
+  .btn {
+    background: var(--amarillo);
+    color: var(--verde-oscuro);
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+  @keyframes fadeInDown { from { opacity:0; transform: translateY(-30px);} to {opacity:1; transform:translateY(0);} }
+  @keyframes fadeInUp { from { opacity:0; transform: translateY(30px);} to {opacity:1; transform:translateY(0);} }
+
+  /* SECCIONES */
+  section { padding: 4rem 2rem; max-width: 1200px; margin: auto; }
+  h2.titulo {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--verde-oscuro);
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  h2.titulo::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: var(--verde-claro);
+    margin: 0.5rem auto;
+    border-radius: 2px;
+  }
+
+  /* ESTADÍSTICAS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+  }
+  .stat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s;
+  }
+  .stat-card:hover { transform: translateY(-10px); }
+  .stat-number {
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: var(--alerta);
+  }
+  .stat-label { color: var(--verde); font-weight: 600; margin-top: 0.5rem; }
+
+  /* TIPOS DE CONTAMINACIÓN */
+  .tipos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .tipo-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .tipo-card:hover { transform: scale(1.02); }
+  .tipo-header {
+    padding: 1.5rem;
+    color: white;
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
+  .tipo-body {
+    padding: 0 1.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s, padding 0.5s;
+  }
+  .tipo-card.active .tipo-body {
+    padding: 1.5rem;
+    max-height: 500px;
+  }
+  .tipo-card:nth-child(1) .tipo-header { background: linear-gradient(135deg,#4a5568,#2d3748); }
+  .tipo-card:nth-child(2) .tipo-header { background: linear-gradient(135deg,#3182ce,#2b6cb0); }
+  .tipo-card:nth-child(3) .tipo-header { background: linear-gradient(135deg,#d69e2e,#b7791f); }
+  .tipo-card:nth-child(4) .tipo-header { background: linear-gradient(135deg,#e53e3e,#c53030); }
+  .tipo-card:nth-child(5) .tipo-header { background: linear-gradient(135deg,#38a169,#2f855a); }
+
+  /* CALCULADORA */
+  .calculadora {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin: auto;
+  }
+  .calc-item {
+    margin-bottom: 1.5rem;
+  }
+  .calc-item label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--verde-oscuro);
+  }
+  .calc-item input[type="range"] {
+    width: 100%;
+    accent-color: var(--verde-claro);
+  }
+  .calc-item .valor {
+    text-align: right;
+    color: var(--verde);
+    font-weight: bold;
+  }
+  .resultado {
+    background: linear-gradient(135deg, var(--verde-oscuro), var(--verde));
+    color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .resultado h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+  .resultado .toneladas { font-size: 3rem; font-weight: bold; color: var(--amarillo); }
+  .resultado .mensaje { margin-top: 1rem; font-style: italic; }
+
+  /* QUIZ */
+  .quiz-container {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 700px;
+    margin: auto;
+  }
+  .pregunta { font-size: 1.3rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--verde-oscuro); }
+  .opciones { display: grid; gap: 0.8rem; }
+  .opcion {
+    padding: 1rem;
+    background: var(--crema);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1rem;
+  }
+  .opcion:hover { border-color: var(--verde-claro); }
+  .opcion.correcta { background: #d4edda; border-color: #28a745; color: #155724; }
+  .opcion.incorrecta { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+  .quiz-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: var(--verde);
+  }
+  .quiz-final {
+    text-align: center;
+    padding: 2rem;
+  }
+  .quiz-final h3 { color: var(--verde-oscuro); font-size: 2rem; margin-bottom: 1rem; }
+
+  /* CONSEJOS */
+  .consejos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  .consejo {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    border-left: 5px solid var(--verde-claro);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+  }
+  .consejo:hover { transform: translateX(5px); }
+  .consejo .icono { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .consejo h4 { color: var(--verde-oscuro); margin-bottom: 0.5rem; }
+
+  /* FOOTER */
+  footer {
+    background: var(--verde-oscuro);
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 3rem;
+  }
+  footer a { color: var(--amarillo); text-decoration: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero-content h1 { font-size: 2.2rem; }
+    .hero-content p { font-size: 1rem; }
+    nav ul { gap: 0.8rem; font-size: 0.9rem; }
+    .logo { font-size: 1.4rem; }
+    h2.titulo { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-container">
+    <div class="logo">🌿 Eco<span>Voz</span></div>
+    <nav>
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#datos">Datos</a></li>
+        <li><a href="#tipos">Tipos</a></li>
+        <li><a href="#calculadora">Calculadora</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+        <li><a href="#consejos">Consejos</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-content">
+    <h1>El planeta nos necesita HOY</h1>
+    <p>Información, datos y herramientas para entender y combatir la contaminación ambiental</p>
+    <button class="btn" onclick="document.getElementById('datos').scrollIntoView({behavior:'smooth'})">Descubre más ↓</button>
+  </div>
+</section>
+
+<!-- ESTADÍSTICAS -->
+<section id="datos">
+  <h2 class="titulo">📊 Datos que no puedes ignorar</h2>
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-number" data-target="9">0</div>
+      <div class="stat-label">de cada 10 personas respiran aire contaminado</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" data-target="8">0</div>
+      <div class="stat-label">millones de toneladas de plástico llegan al mar cada año</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" data-target="7">0</div>
+      <div class="stat-label">millones de muertes anuales por contaminación</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" data-target="500">0</div>
+      <div class="stat-label">años tarda una botella de plástico en degradarse</div>
+    </div>
+  </div>
+</section>
+
+<!-- TIPOS DE CONTAMINACIÓN -->
+<section id="tipos">
+  <h2 class="titulo">🌫️ Tipos de contaminación</h2>
+  <p style="text-align:center; margin-bottom:2rem; color:#555;">Haz clic en cada tarjeta para conocer más 👇</p>
+  <div class="tipos-grid">
+    <div class="tipo-card" onclick="this.classList.toggle('active')">
+      <div class="tipo-header">💨 Contaminación Atmosférica</div>
+      <div class="tipo-body">
+        <p>Producida por gases emitidos por vehículos, industrias y quema de combustibles fósiles. Genera smog, lluvia ácida y contribuye al cambio climático. Principales contaminantes: CO₂, NOx, SO₂ y partículas PM2.5.</p>
+      </div>
+    </div>
+    <div class="tipo-card" onclick="this.classList.toggle('active')">
+      <div class="tipo-header">💧 Contaminación Hídrica</div>
+      <div class="tipo-body">
+        <p>Vertidos industriales, pesticidas, plásticos y aguas residuales contaminan ríos, lagos y océanos. Afecta la biodiversidad acuática y la salud humana, limitando el acceso a agua potable.</p>
+      </div>
+    </div>
+    <div class="tipo-card" onclick="this.classList.toggle('active')">
+      <div class="tipo-header">🌍 Contaminación del Suelo</div>
+      <div class="tipo-body">
+        <p>Causada por pesticidas, metales pesados, basura y residuos industriales. Degrada la fertilidad del suelo, contamina alimentos y afecta a los ecosistemas terrestres.</p>
+      </div>
+    </div>
+    <div class="tipo-card" onclick="this.classList.toggle('active')">
+      <div class="tipo-header">🔊 Contaminación Acústica</div>
+      <div class="tipo-body">
+        <p>Exceso de ruido urbano, tráfico e industrias. Provoca estrés, problemas auditivos, trastornos del sueño y afecta la fauna, especialmente aves y mamíferos marinos.</p>
+      </div>
+    </div>
+    <div class="tipo-card" onclick="this.classList.toggle('active')">
+      <div class="tipo-header">💡 Contaminación Lumínica</div>
+      <div class="tipo-body">
+        <p>Exceso de luz artificial nocturna. Altera los ciclos naturales de animales y plantas, desperdicia energía y nos impide ver las estrellas. Afecta también el ritmo circadiano humano.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULADORA -->
+<section id="calculadora">
+  <h2 class="titulo">🧮 Calcula tu huella de carbono</h2>
+  <p style="text-align:center; margin-bottom:2rem; color:#555;">Ajusta los valores según tu estilo de vida</p>
+  <div class="calculadora">
+    <div class="calc-item">
+      <label>🚗 Km en coche por semana: <span class="valor" id="v1">100</span></label>
+      <input type="range" min="0" max="1000" value="100" id="coche" oninput="calcular()">
+    </div>
+    <div class="calc-item">
+      <label>🍖 Comidas con carne por semana: <span class="valor" id="v2">7</span></label>
+      <input type="range" min="0" max="21" value="7" id="carne" oninput="calcular()">
+    </div>
+    <div class="calc-item">
+      <label>⚡ Consumo eléctrico mensual (kWh): <span class="valor" id="v3">200</span></label>
+      <input type="range" min="50" max="1000" value="200" id="luz" oninput="calcular()">
+    </div>
+    <div class="calc-item">
+      <label>✈️ Vuelos al año: <span class="valor" id="v4">1</span></label>
+      <input type="range" min="0" max="20" value="1" id="vuelo" oninput="calcular()">
+    </div>
+    <div class="resultado">
+      <h3>Tu huella de carbono estimada:</h3>
+      <div class="toneladas"><span id="total">0</span> ton CO₂/año</div>
+      <div class="mensaje" id="mensaje">Calculando...</div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <h2 class="titulo">🧠 ¿Cuánto sabes del medio ambiente?</h2>
+  <div class="quiz-container" id="quizBox">
+    <div class="quiz-info">
+      <span>Pregunta <span id="qNum">1</span>/5</span>
+      <span>Puntaje: <span id="score">0</span></span>
+    </div>
+    <div class="pregunta" id="pregunta"></div>
+    <div class="opciones" id="opciones"></div>
+  </div>
+</section>
+
+<!-- CONSEJOS -->
+<section id="consejos">
+  <h2 class="titulo">💚 Pequeños cambios, grandes impactos</h2>
+  <div class="consejos-grid">
+    <div class="consejo">
+      <div class="icono">🚲</div>
+      <h4>Muévete sostenible</h4>
+      <p>Usa bici, camina o transporte público. Reduce emisiones y mejora tu salud.</p>
+    </div>
+    <div class="consejo">
+      <div class="icono">♻️</div>
+      <h4>Recicla correctamente</h4>
+      <p>Separa residuos: orgánico, plástico, vidrio, papel. Reduce, reutiliza, recicla.</p>
+    </div>
+    <div class="consejo">
+      <div class="icono">🌱</div>
+      <h4>Come más plantas</h4>
+      <p>Reducir el consumo de carne disminuye drásticamente tu huella ambiental.</p>
+    </div>
+    <div class="consejo">
+      <div class="icono">💡</div>
+      <h4>Ahorra energía</h4>
+      <p>Apaga luces innecesarias, usa LED y desconecta aparatos en standby.</p>
+    </div>
+    <div class="consejo">
+      <div class="icono">🚰</div>
+      <h4>Cuida el agua</h4>
+      <p>Duchas cortas, cierra el grifo y reutiliza agua cuando sea posible.</p>
+    </div>
+    <div class="consejo">
+      <div class="icono">🛍️</div>
+      <h4>Di no al plástico</h4>
+      <p>Lleva tu bolsa reusable, botella y evita productos de un solo uso.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>🌍 <strong>EcoVoz</strong> — Porque el planeta no tiene botón de reinicio</p>
+  <p style="margin-top:0.5rem; font-size:0.9rem;">Hecho con 💚 por activistas digitales · 2026</p>
+</footer>
+
+<script>
+  // Animación de contadores
+  const stats = document.querySelectorAll('.stat-number');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const target = +entry.target.dataset.target;
+        let count = 0;
+        const step = target / 60;
+        const timer = setInterval(() => {
+          count += step;
+          if (count >= target) { count = target; clearInterval(timer); }
+          entry.target.textContent = Math.floor(count);
+        }, 25);
+        observer.unobserve(entry.target);
+      }
+    });
+  });
+  stats.forEach(s => observer.observe(s));
+
+  // Calculadora de huella de carbono
+  function calcular() {
+    const coche = +document.getElementById('coche').value;
+    const carne = +document.getElementById('carne').value;
+    const luz = +document.getElementById('luz').value;
+    const vuelo = +document.getElementById('vuelo').value;
+
+    document.getElementById('v1').textContent = coche;
+    document.getElementById('v2').textContent = carne;
+    document.getElementById('v3').textContent = luz;
+    document.getElementById('v4').textContent = vuelo;
+
+    // Cálculo aproximado (toneladas CO2/año)
+    const total = (coche * 52 * 0.21 / 1000) + (carne * 52 * 0.006) + (luz * 12 * 0.0005) + (vuelo * 0.9);
+    document.getElementById('total').textContent = total.toFixed(2);
+
+    let msg = '';
+    if (total < 3) msg = '🌟 ¡Excelente! Tu huella es muy baja. ¡Sigue así!';
+    else if (total < 6) msg = '👍 Buen trabajo, pero aún puedes mejorar.';
+    else if (total < 10) msg = '⚠️ Huella media. Considera reducir tu consumo.';
+    else msg = '🚨 Huella alta. Es momento de actuar por el planeta.';
+    document.getElementById('mensaje').textContent = msg;
+  }
+  calcular();
+
+  // QUIZ
+  const preguntas = [
+    {
+      q: '¿Cuánto tarda una botella de plástico en degradarse?',
+      ops: ['50 años', '100 años', '500 años', '1000 años'],
+      correcta: 2
+    },
+    {
+      q: '¿Cuál es el principal gas de efecto invernadero?',
+      ops: ['Oxígeno', 'Dióxido de carbono', 'Helio', 'Nitrógeno'],
+      correcta: 1
+    },
+    {
+      q: '¿Qué porcentaje del planeta es agua dulce?',
+      ops: ['25%', '10%', '3%', '50%'],
+      correcta: 2
+    },
+    {
+      q: '¿Cuál de estas energías es renovable?',
+      ops: ['Carbón', 'Petróleo', 'Solar', 'Gas natural'],
+      correcta: 2
+    },
+    {
+      q: '¿Qué acción reduce más tu huella de carbono?',
+      ops: ['Reciclar papel', 'Usar bombillas LED', 'Dejar de comer carne', 'Cerrar el grifo'],
+      correcta: 2
+    }
+  ];
+
+  let preguntaActual = 0;
+  let puntaje = 0;
+
+  function cargarPregunta() {
+    const p = preguntas[preguntaActual];
+    document.getElementById('qNum').textContent = preguntaActual + 1;
+    document.getElementById('pregunta').textContent = p.q;
+    const cont = document.getElementById('opciones');
+    cont.innerHTML = '';
+    p.ops.forEach((op, i) => {
+      const div = document.createElement('div');
+      div.className = 'opcion';
+      div.textContent = op;
+      div.onclick = () => responder(i, div);
+      cont.appendChild(div);
+    });
+  }
+
+  function responder(i, elem) {
+    const p = preguntas[preguntaActual];
+    const opciones = document.querySelectorAll('.opcion');
+    opciones.forEach(o => o.style.pointerEvents = 'none');
+    if (i === p.correcta) {
+      elem.classList.add('correcta');
+      puntaje++;
+      document.getElementById('score').textContent = puntaje;
+    } else {
+      elem.classList.add('incorrecta');
+      opciones[p.correcta].classList.add('correcta');
+    }
+    setTimeout(() => {
+      preguntaActual++;
+      if (preguntaActual < preguntas.length) cargarPregunta();
+      else mostrarFinal();
+    }, 1500);
+  }
+
+  function mostrarFinal() {
+    const box = document.getElementById('quizBox');
+    let mensaje = '';
+    if (puntaje === 5) mensaje = '🏆 ¡Eres un experto ambiental!';
+    else if (puntaje >= 3) mensaje = '👏 ¡Buen trabajo! Sabes bastante.';
+    else mensaje = '📚 ¡Sigue aprendiendo! El planeta te lo agradecerá.';
+    box.innerHTML = `
+      <div class="quiz-final">
+        <h3>${mensaje}</h3>
+        <p style="font-size:1.3rem; margin-bottom:1rem;">Puntaje final: <strong>${puntaje}/5</strong></p>
+        <button class="btn" onclick="reiniciarQuiz()">🔁 Jugar de nuevo</button>
+      </div>
+    `;
+  }
+
+  function reiniciarQuiz() {
+    preguntaActual = 0;
+    puntaje = 0;
+    document.getElementById('score').textContent = 0;
+    document.getElementById('quizBox').innerHTML = `
+      <div class="quiz-info">
+        <span>Pregunta <span id="qNum">1</span>/5</span>
+        <span>Puntaje: <span id="score">0</span></span>
+      </div>
+      <div class="pregunta" id="pregunta"></div>
+      <div class="opciones" id="opciones"></div>
+    `;
+    cargarPregunta();
+  }
+
+  cargarPregunta();
+</script>
+
+</body>
+</html>
